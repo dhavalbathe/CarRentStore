@@ -12,7 +12,7 @@ module.exports.renderNewListing = (req, res) => {
 module.exports.showListing = async (req, res) => {
     console.log(req.url, "Working");
     const { id } = req.params;
-    const listing = await Listing.findById(id).populate({path: 'reviews', populate: { path: "author"} }).populate('owner');
+    const listing = await Listing.findById(id);
     
     if(!listing) {
         req.flash("error", "Lising you request for does not exists");
@@ -22,12 +22,8 @@ module.exports.showListing = async (req, res) => {
 };
 
 module.exports.createListing = async (req, res) => {
-    const url = req.file.url;
-    const filename = req.file.filename;
-
+    console.log("Request Body: ", req.body);
     const listing = new Listing(req.body.listing);
-    listing.owner = req.user._id;
-    listing.image = {url, filename};
     
     listing.save();
     req.flash("success", "New Listing Added");

@@ -18,7 +18,7 @@ const listingController = require('../controllers/listings.js');
 //index route
 router.route('/')
 .get(wrapAsync(listingController.index))
-.post(isLoggedIn, upload.single("listing[image]"), wrapAsync(listingController.createListing));
+.post(isLoggedIn, wrapAsync(listingController.createListing));
 
 //new listing route
 router.get('/new', isLoggedIn, listingController.renderNewListing);
@@ -26,8 +26,8 @@ router.get('/new', isLoggedIn, listingController.renderNewListing);
 // listing id route
 router.route('/:id')
 .get(listingController.showListing)
-.put(isLoggedIn, isOwner , wrapAsync(listingController.updateListing))
-.delete(isLoggedIn, isOwner, wrapAsync(listingController.destroyListing))
+.put(isLoggedIn, wrapAsync(listingController.updateListing))
+.delete(isLoggedIn, wrapAsync(listingController.destroyListing))
 
 //edit listing route
 router.get('/:id/edit', isLoggedIn, wrapAsync(listingController.renderEditForm));

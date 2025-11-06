@@ -5,13 +5,15 @@ const Review = require("./review.js");
 const listingSchema = new Schema({
     title: {
         type: String,
-        require: true,
+        required: true,   // fixed small typo: "require" → "required"
     },
     
     description: String,
 
+    // ✅ Changed: image is now just a string, not an object
     image: {
-        url: String,
+        type: String,
+        default: "https://via.placeholder.com/300x200.png?text=No+Image" // optional fallback
     },
 
     price: Number,
@@ -26,8 +28,8 @@ const listingSchema = new Schema({
 });
 
 listingSchema.post('findOneAndDelete', async (listing) => {
-    if(listing) {
-        await Review.deleteMany({_id: {$in: listing.reviews}});
+    if (listing) {
+        await Review.deleteMany({ _id: { $in: listing.reviews } });
         console.log("This listing is deleting");
     }
 });
@@ -35,4 +37,3 @@ listingSchema.post('findOneAndDelete', async (listing) => {
 const Listing = mongoose.model("Listing", listingSchema);
 
 module.exports = Listing;
-

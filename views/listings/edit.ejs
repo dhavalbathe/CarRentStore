@@ -18,10 +18,10 @@
                     <div class="invalid-feedback">Please enter valid description</div>
                 </div>
                 
-        
-               <div class="mb-3">
+                <!-- ✅ Changed this line -->
+                <div class="mb-3">
                     <label for="image" class="form-label">Image Link</label>
-                    <input type="text" value="<%= listing.image.url %>" name="listing[image]" class="form-control" required>
+                    <input type="text" value="<%= listing.image %>" name="listing[image]" class="form-control" required>
                     <div class="invalid-feedback">Please enter a image url</div>
                 </div>
         
@@ -50,4 +50,3 @@
         </div>
     </div>
 </body>
-

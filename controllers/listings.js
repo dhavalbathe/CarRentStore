@@ -2,7 +2,7 @@ const Listing = require('../models/listing');
 
 module.exports.index = async (req, res) => {
     const allListings = await Listing.find({});
-    res.render('listings/index', {allListings});
+    res.render('listings/index', { allListings });
 };
 
 module.exports.renderNewListing = (req, res) => {
@@ -12,37 +12,49 @@ module.exports.renderNewListing = (req, res) => {
 module.exports.showListing = async (req, res) => {
     console.log(req.url, "Working");
     const { id } = req.params;
-    const listing = await Listing.findById(id);
+    const listing = await Listing.findById(id).populate("reviews");
     
-    if(!listing) {
-        req.flash("error", "Lising you request for does not exists");
-        res.redirect('/listings');
+    if (!listing) {
+        req.flash("error", "Listing you requested does not exist");
+        return res.redirect('/listings');
     }
-    res.render('listings/show', {listing});
+
+    console.log(listing);
+    res.render('listings/show', { listing });
 };
 
 module.exports.createListing = async (req, res) => {
     console.log("Request Body: ", req.body);
-    const listing = new Listing(req.body.listing);
-    
-    listing.save();
+
+    // ✅ store image as direct string (since frontend sends listing[image])
+    const listingData = req.body.listing;
+
+    const listing = new Listing(listingData);
+    await listing.save();
+
     req.flash("success", "New Listing Added");
+    console.log(listing);
     res.redirect('/listings');
 };
 
 module.exports.renderEditForm = async (req, res) => {
     const listing = await Listing.findById(req.params.id);
-    if(!listing) {
-        req.flash("error", "Lising you request for does not exists");
-        res.redirect('/listings');
+    if (!listing) {
+        req.flash("error", "Listing you requested does not exist");
+        return res.redirect('/listings');
     }
     console.log(listing);
-    res.render('listings/edit', {listing});
+    res.render('listings/edit', { listing });
 };
 
 module.exports.updateListing = async (req, res) => {
     const { id } = req.params;
-    await Listing.findByIdAndUpdate(id, {...req.body.listing}, { new: true});
+    console.log('request body: ', req.body);
+
+    const listingData = req.body.listing;
+
+    // ✅ image is already a direct string now
+    await Listing.findByIdAndUpdate(id, listingData, { new: true });
     req.flash("success", "Listing Updated!");
     res.redirect(`/listings/${id}`);
 };
